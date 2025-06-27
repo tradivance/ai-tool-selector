@@ -1,485 +1,345 @@
-  <!DOCTYPE html>
-  <html lang="ja">
-  <head>
-    <meta charset="UTF-8">
-    <meta name="viewport" content="width=device-width, 
-  initial-scale=1.0">
-    <title>AIツール選定アシスタント</title>
-    <meta name="description" 
-  content="あなたの業務を効率化する最適なAIツールを提案します">
-    <style>
-      .ai-diagnosis-container * { margin: 0; padding: 0;
-  box-sizing: border-box; }
-      .ai-diagnosis-container {
-        font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic 
-  ProN', 'Yu Gothic', 'Meiryo', sans-serif;
-        line-height: 1.4;
-        color: #333;
-        background: white;
-        border: 2px solid #04384c;
-        border-radius: 12px;
-        box-shadow: 0 4px 12px rgba(4, 56, 76, 0.1);
-        overflow: hidden;
-        margin: 20px 0;
-        max-width: 600px;
-        margin-left: auto;
-        margin-right: auto;
-      }
-      .ai-diagnosis-header {
-    background: #04384c;
-    color: white;
-    text-align: center;
-    padding: 25px 20px 18px 20px;
-    border-bottom: 5px solid #157682;
-  }
-      .ai-diagnosis-header h1 { font-size: 1.8rem;
-  margin-bottom: 6px; font-weight: 600; line-height: 1.3; }
-      .ai-diagnosis-subtitle { font-size: 1rem; opacity: 0.9;
-  line-height: 1.3; }
-      .ai-diagnosis-question-container { padding: 25px;
-  background: white; display: none; }
-      .ai-diagnosis-question-container.active { display: block;
-   }
-      .ai-diagnosis-question h2 { font-size: 1.3rem;
-  margin-bottom: 15px; color: #04384c; font-weight: 600;
-  line-height: 1.3; }
-      .ai-diagnosis-options { display: grid; gap: 12px; }
-      .ai-diagnosis-option {
-        background: white; border: 2px solid #e9ecef;
-  border-radius: 8px; padding: 15px; cursor: pointer;
-        transition: all 0.3s ease; position: relative;
-  overflow: hidden;
-      }
-      .ai-diagnosis-option:hover {
-        background: #f8f9fa; border-color: #04384c; transform:
-  translateY(-1px); box-shadow: 0 3px 8px rgba(4, 56, 76,
-  0.15);
-      }
-      .ai-diagnosis-option.selected {
-        background: #f8f9fa; border-color: #04384c; box-shadow:
-   0 3px 8px rgba(4, 56, 76, 0.2);
-      }
-      .ai-diagnosis-result-container { padding: 25px;
-  background: white; display: none; }
-      .ai-diagnosis-result-title {
-    font-size: 1.5rem;
-    color: #157682;
-    font-weight: 700;
-    line-height: 1.3;
-    letter-spacing: 0.02em;
-    margin: 0;
-    display: flex;
-    align-items: center;
-  }
-      .ai-diagnosis-recommended-tool {
-    background: #04384c;
-    color: white;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    text-align: center;
-    border: 2px solid #157682;
-  }
-      .ai-diagnosis-recommended-tool h3 { font-size: 1.4rem;
-  margin-bottom: 15px; font-weight: 600; line-height: 1.3; }
+<!DOCTYPE html>
+<html lang="ja">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>AIツール選定アシスタント</title>
+  <meta name="description" content="あなたの業務を効率化する最適なAIツールを提案します">
+  <style>
+    .ai-diagnosis-container * { margin: 0; padding: 0; box-sizing: border-box; }
+    .ai-diagnosis-container {
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+      line-height: 1.4;
+      color: #333;
+      background: white;
+      border: 2px solid #04384c;
+      border-radius: 12px;
+      box-shadow: 0 4px 12px rgba(4, 56, 76, 0.1);
+      overflow: hidden;
+      margin: 20px 0;
+      max-width: 600px;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .ai-diagnosis-header {
+      background: #04384c;
+      color: white;
+      text-align: center;
+      padding: 25px 20px 18px 20px;
+      border-bottom: 5px solid #157682;
+    }
+    .ai-diagnosis-header h1 { font-size: 1.8rem; margin-bottom: 6px; font-weight: 600; line-height: 1.3; }
+    .ai-diagnosis-subtitle { font-size: 1rem; opacity: 0.9; line-height: 1.3; }
+    .ai-diagnosis-question-container { padding: 25px; background: white; display: none; }
+    .ai-diagnosis-question-container.active { display: block; }
+    .ai-diagnosis-question h2 { font-size: 1.3rem; margin-bottom: 15px; color: #04384c; font-weight: 600; line-height: 1.3; }
+    .ai-diagnosis-options { display: grid; gap: 12px; }
+    .ai-diagnosis-option {
+      background: white; border: 2px solid #e9ecef; border-radius: 8px; padding: 15px; cursor: pointer;
+      transition: all 0.3s ease; position: relative; overflow: hidden;
+    }
+    .ai-diagnosis-option:hover {
+      background: #f8f9fa; border-color: #04384c; transform: translateY(-1px); box-shadow: 0 3px 8px rgba(4, 56, 76, 0.15);
+    }
+    .ai-diagnosis-option.selected {
+      background: #f8f9fa; border-color: #04384c; box-shadow: 0 3px 8px rgba(4, 56, 76, 0.2);
+    }
+    .ai-diagnosis-result-container { padding: 25px; background: white; display: none; }
+    .ai-diagnosis-result-title {
+      font-size: 1.5rem;
+      color: #157682;
+      font-weight: 700;
+      line-height: 1.3;
+      letter-spacing: 0.02em;
+      margin: 0;
+      display: flex;
+      align-items: center;
+    }
+    .ai-diagnosis-recommended-tool {
+      background: #04384c;
+      color: white;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      text-align: center;
+      border: 2px solid #157682;
+    }
+    .ai-diagnosis-recommended-tool h3 { font-size: 1.4rem; margin-bottom: 15px; font-weight: 600; line-height: 1.3; }
 
-  .ai-diagnosis-result-title-row {
-    display: flex;
-    align-items: center;
-    justify-content: center;
-    gap: 16px;
-    margin-bottom: 18px;
-    min-height: 48px;
-  }
-  .ai-diagnosis-tool-logo-title {
-    width: auto;
-    max-height: 36px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 8px;
-    display: flex;
-    align-items: center;
-    flex-shrink: 0;
-  }
-  .ai-diagnosis-recommended-tool .main-tool-name {
-    text-align: center;
-    margin: 0 0 8px 0;
-    font-size: 2rem;
-    font-weight: bold;
-  }
-  /* 個別ロゴ調整 */
-  .ai-logo-adjust-slack,
-  .ai-logo-adjust-lucidchart,
-  .ai-logo-adjust-tableau,
-  .ai-logo-adjust-amazon,
-  .ai-logo-adjust-skywork,
-  .ai-logo-adjust-asana,
-  .ai-logo-adjust-hubspot {
-    padding-top: 3px;
-    padding-bottom: 3px;
-  }
-  .ai-diagnosis-recommended-tool h3 {
-    text-align: center;
-    font-size: 1.4rem;
-    margin-bottom: 15px;
-    font-weight: 600;
-    line-height: 1.3;
-    display: block;
-  }
-  .ai-diagnosis-tool-logo {
-    display: none !important;
-  }
-  .ai-diagnosis-tool-logo {
-    height: 30px;
-    width: auto;
-    max-width: 48px;
-    object-fit: contain;
-    background: #fff;
-    border-radius: 8px;
-    display: inline-block;
-    margin-right: 8px;
-  }
-      .ai-diagnosis-recommended-tool p { font-size: 1rem;
-  opacity: 0.9; line-height: 1.6; max-width: 600px; margin: 0
-  auto; }
-      .ai-diagnosis-other-tools {
-    background: #f8f9fa;
-    padding: 25px;
-    border-radius: 8px;
-    margin-bottom: 30px;
-    text-align: center;
-    border: 2px solid #157682;
-  }
-      .ai-diagnosis-other-tools h4 { font-size: 1.1rem;
-  margin-bottom: 15px; color: #04384c; font-weight: 600;
-  line-height: 1.3; }
-      .other-tools-title {
-        font-size: 1.1rem;
-        margin-bottom: 15px;
-        color: #04384c;
-        font-weight: 600;
-        line-height: 1.3;
-      }
-      ul.other-tools-list {
-        list-style: none;
-        margin: 0;
-        padding: 0;
-        display: grid;
-        grid-template-columns: repeat(2, 1fr);
-        gap: 12px;
-        border-top: 1.5px solid #157682;
-        border-bottom: 1.5px solid #157682;
-      }
-      ul.other-tools-list li {
-        padding: 12px 0;
-        color: #157682;
-        font-size: 0.95rem;
-        line-height: 1.4;
-        border-bottom: 1px solid #e9ecef;
-        font-weight: 600;
-      }
-      ul.other-tools-list li:last-child { border-bottom: none;
-  }
-      ul.other-tools-list li:nth-child(odd) { border-right: 1px
-   solid #e9ecef; }
-      .ai-diagnosis-cta-button {
-    background: #157682;
-    color: #fff;
-    border: none;
-    padding: 18px 48px;
-    border-radius: 32px;
-    font-size: 1.15rem;
-    font-weight: bold;
-    cursor: pointer;
-    transition: all 0.2s ease;
-    text-decoration: none;
-    display: flex;
-    justify-content: center;
-    align-items: center;
-    line-height: 1;
-    margin-top: 30px;
-    margin-left: auto;
-    margin-right: auto;
-    box-shadow: 0 2px 8px rgba(21,118,130,0.10);
-    letter-spacing: 0.03em;
-    text-align: center;
-    width: fit-content;
-    min-width: 220px;
-  }
+    .ai-diagnosis-result-title-row {
+      display: flex;
+      align-items: center;
+      justify-content: center;
+      gap: 16px;
+      margin-bottom: 18px;
+      min-height: 48px;
+    }
+    .ai-diagnosis-tool-logo-title {
+      width: auto;
+      max-height: 36px;
+      object-fit: contain;
+      background: #fff;
+      border-radius: 8px;
+      display: flex;
+      align-items: center;
+      flex-shrink: 0;
+    }
+    .ai-diagnosis-recommended-tool .main-tool-name {
+      text-align: center;
+      margin: 0 0 8px 0;
+      font-size: 2rem;
+      font-weight: bold;
+    }
+    /* 個別ロゴ調整 */
+    .ai-logo-adjust-slack,
+    .ai-logo-adjust-lucidchart,
+    .ai-logo-adjust-tableau,
+    .ai-logo-adjust-amazon,
+    .ai-logo-adjust-skywork,
+    .ai-logo-adjust-asana,
+    .ai-logo-adjust-hubspot {
+      padding-top: 3px;
+      padding-bottom: 3px;
+    }
+    .ai-diagnosis-recommended-tool h3 {
+      text-align: center;
+      font-size: 1.4rem;
+      margin-bottom: 15px;
+      font-weight: 600;
+      line-height: 1.3;
+      display: block;
+    }
+    .ai-diagnosis-tool-logo {
+      display: none !important;
+    }
+    .ai-diagnosis-recommended-tool p { font-size: 1rem; opacity: 0.9; line-height: 1.6; max-width: 600px; margin: 0 auto; }
+    .ai-diagnosis-other-tools {
+      background: #f8f9fa;
+      padding: 25px;
+      border-radius: 8px;
+      margin-bottom: 30px;
+      text-align: center;
+      border: 2px solid #157682;
+    }
+    .ai-diagnosis-other-tools h4 { font-size: 1.1rem; margin-bottom: 15px; color: #04384c; font-weight: 600; line-height: 1.3; }
+    .other-tools-title {
+      font-size: 1.1rem;
+      margin-bottom: 15px;
+      color: #04384c;
+      font-weight: 600;
+      line-height: 1.3;
+    }
+    ul.other-tools-list {
+      list-style: none;
+      margin: 0;
+      padding: 0;
+      display: grid;
+      grid-template-columns: repeat(2, 1fr);
+      gap: 12px;
+      border-top: 1.5px solid #157682;
+      border-bottom: 1.5px solid #157682;
+    }
+    ul.other-tools-list li {
+      padding: 12px 0;
+      color: #157682;
+      font-size: 0.95rem;
+      line-height: 1.4;
+      border-bottom: 1px solid #e9ecef;
+      font-weight: 600;
+    }
+    ul.other-tools-list li:last-child { border-bottom: none; }
+    ul.other-tools-list li:nth-child(odd) { border-right: 1px solid #e9ecef; }
+    .ai-diagnosis-cta-button {
+      background: #157682;
+      color: #fff;
+      border: none;
+      padding: 18px 48px;
+      border-radius: 32px;
+      font-size: 1.15rem;
+      font-weight: bold;
+      cursor: pointer;
+      transition: all 0.2s ease;
+      text-decoration: none;
+      display: flex;
+      justify-content: center;
+      align-items: center;
+      line-height: 1;
+      margin-top: 30px;
+      margin-left: auto;
+      margin-right: auto;
+      box-shadow: 0 2px 8px rgba(21,118,130,0.10);
+      letter-spacing: 0.03em;
+      text-align: center;
+      width: fit-content;
+      min-width: 220px;
+    }
+    .ai-diagnosis-cta-button:hover {
+      background: #209bb3;
+      color: #fff;
+      transform: translateY(-2px);
+      box-shadow: 0 4px 16px rgba(21,118,130,0.18);
+    }
 
-      .ai-diagnosis-cta-button:hover {
-    background: #209bb3;
-    color: #fff;
-    transform: translateY(-2px);
-    box-shadow: 0 4px 16px rgba(21,118,130,0.18);
-  }
+    body {
+      margin: 0;
+      padding: 20px;
+      background: #f5f5f5;
+      font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic ProN', 'Yu Gothic', 'Meiryo', sans-serif;
+    }
 
-      body {
-        margin: 0;
-        padding: 20px;
-        background: #f5f5f5;
-        font-family: 'Hiragino Sans', 'Hiragino Kaku Gothic 
-  ProN', 'Yu Gothic', 'Meiryo', sans-serif;
-      }
+    .header {
+      text-align: center;
+      margin-bottom: 30px;
+      padding: 20px;
+      background: white;
+      border-radius: 12px;
+      box-shadow: 0 2px 8px rgba(0,0,0,0.1);
+      max-width: 600px;
+      margin: 0 auto 30px auto;
+    }
 
-      .header {
-        text-align: center;
-        margin-bottom: 30px;
-        padding: 20px;
-        background: white;
-        border-radius: 12px;
-        box-shadow: 0 2px 8px rgba(0,0,0,0.1);
-        max-width: 600px;
-        margin: 0 auto 30px auto;
-      }
+    .header h1 {
+      color: #04384c;
+      margin-bottom: 10px;
+      font-size: 2.2rem;
+    }
 
-      .header h1 {
-        color: #04384c;
-        margin-bottom: 10px;
-        font-size: 2.2rem;
-      }
+    .header p {
+      color: #666;
+      margin: 0;
+      font-size: 1.1rem;
+    }
+  </style>
+</head>
+<body>
+  <div class="header">
+    <h1>AIツール選定アシスタント</h1>
+    <p>あなたの業務に最適なAIツールを見つけましょう！</p>
+  </div>
 
-      .header p {
-        color: #666;
-        margin: 0;
-        font-size: 1.1rem;
-      }
+<div class="ai-diagnosis-container">
+  <div class="ai-diagnosis-header">
+    <h1>AIツール選定アシスタント</h1>
+    <p class="ai-diagnosis-subtitle">あなたの業務を効率化する最適なAIツールを提案します</p>
+  </div>
 
-    </style>
-  </head>
-  <body>
-    <div class="header">
-      <h1>AIツール選定アシスタント</h1>
-      <p>あなたの業務に最適なAIツールを見つけましょう！</p>
-    </div>
-
-  <div class="ai-diagnosis-container">
-    <div class="ai-diagnosis-header">
-      <h1>AIツール選定アシスタント</h1>
-      <p class="ai-diagnosis-subtitle">あなたの業務を効率化する
-  最適なAIツールを提案します</p>
-    </div>
-
-    <!-- 1階層目 -->
-    <div class="ai-diagnosis-question-container active" 
-  id="step1">
-      <div class="ai-diagnosis-question">
-        <h2>まずは、あなたの業務の自動化・システム化の目的を教
-  えてください：</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-next="step2-text">テキスト生成</div>
-          <div class="ai-diagnosis-option" 
-  data-next="step2-content">コンテンツ生成</div>
-          <div class="ai-diagnosis-option" 
-  data-next="step2-analysis">データ分析</div>
-          <div class="ai-diagnosis-option" 
-  data-next="step2-workflow">ワークフロー</div>
-          <div class="ai-diagnosis-option" 
-  data-next="step2-automation">業務自動化</div>
-          <div class="ai-diagnosis-option" 
-  data-next="step2-collaboration">コラボレーション</div>
-        </div>
+  <!-- 1階層目 -->
+  <div class="ai-diagnosis-question-container active" id="step1">
+    <div class="ai-diagnosis-question">
+      <h2>まずは、あなたの業務の自動化・システム化の目的を教えてください：</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-next="step2-text">テキスト生成</div>
+        <div class="ai-diagnosis-option" data-next="step2-content">コンテンツ生成</div>
+        <div class="ai-diagnosis-option" data-next="step2-analysis">データ分析</div>
+        <div class="ai-diagnosis-option" data-next="step2-workflow">ワークフロー</div>
+        <div class="ai-diagnosis-option" data-next="step2-automation">業務自動化</div>
+        <div class="ai-diagnosis-option" data-next="step2-collaboration">コラボレーション</div>
       </div>
-    </div>
-
-    <!-- 2階層目（全カテゴリ分） -->
-    <div class="ai-diagnosis-question-container" 
-  id="step2-text">
-      <div class="ai-diagnosis-question">
-        <h2>テキスト生成で特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="notion">ワークスペース管理</div>
-          <div class="ai-diagnosis-option" 
-  data-result="workspace">ドキュメント作成</div>
-          <div class="ai-diagnosis-option" 
-  data-result="communication">チームコミュニケーション</div>
-        </div>
-      </div>
-    </div>
-    <div class="ai-diagnosis-question-container" 
-  id="step2-content">
-      <div class="ai-diagnosis-question">
-        <h2>コンテンツ生成で特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="canva">デザイン作成</div>
-          <div class="ai-diagnosis-option" 
-  data-result="marketing">マーケティングコンテンツ</div>
-          <div class="ai-diagnosis-option" 
-  data-result="presentation">プレゼンテーション</div>
-        </div>
-      </div>
-    </div>
-    <div class="ai-diagnosis-question-container" 
-  id="step2-analysis">
-      <div class="ai-diagnosis-question">
-        <h2>データ分析で特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="powerbi">データ可視化</div>
-          <div class="ai-diagnosis-option" 
-  data-result="reporting">レポート作成</div>
-          <div class="ai-diagnosis-option" 
-  data-result="prediction">予測分析</div>
-        </div>
-      </div>
-    </div>
-    <div class="ai-diagnosis-question-container" 
-  id="step2-workflow">
-      <div class="ai-diagnosis-question">
-        <h2>ワークフローで特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="miro">プロセス可視化</div>
-          <div class="ai-diagnosis-option" 
-  data-result="mapping">プロセスマッピング</div>
-          <div class="ai-diagnosis-option" 
-  data-result="collab">チームコラボレーション</div>
-        </div>
-      </div>
-    </div>
-    <div class="ai-diagnosis-question-container" 
-  id="step2-automation">
-      <div class="ai-diagnosis-question">
-        <h2>業務自動化で特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="zapier">アプリケーション連携</div>
-          <div class="ai-diagnosis-option" 
-  data-result="workflow">ワークフロー自動化</div>
-          <div class="ai-diagnosis-option" 
-  data-result="automation">タスク自動化</div>
-        </div>
-      </div>
-    </div>
-    <div class="ai-diagnosis-question-container" 
-  id="step2-collaboration">
-      <div class="ai-diagnosis-question">
-        <h2>コラボレーションで特に重視する機能は何ですか？</h2>
-        <div class="ai-diagnosis-options">
-          <div class="ai-diagnosis-option" 
-  data-result="microsoft365">統合型ツール</div>
-          <div class="ai-diagnosis-option" 
-  data-result="team">チーム管理</div>
-          <div class="ai-diagnosis-option" 
-  data-result="communication">コミュニケーション</div>
-        </div>
-      </div>
-    </div>
-
-    <!-- 診断結果 -->
-    <div class="ai-diagnosis-result-container" id="result">
-      <div class="ai-diagnosis-result-title-row">
-        <h2 
-  class="ai-diagnosis-result-title">おすすめのツール</h2>
-        <img id="main-tool-logo-title" src="" alt="" 
-  class="ai-diagnosis-tool-logo-title" style="display:none;">
-      </div>
-      <div class="ai-diagnosis-recommended-tool">
-        <h3 class="main-tool-name"></h3>
-        <p class="main-tool-description"></p>
-      </div>
-      <div class="ai-diagnosis-other-tools">
-        <h4>関連ツール</h4>
-        <ul class="other-tools-list"></ul>
-      </div>
-      <a href="https://tradivance.co.jp/training/" 
-  class="ai-diagnosis-cta-button">詳しくはコチラ &gt;&gt;</a>
     </div>
   </div>
-  <script>
+
+  <!-- 2階層目（全カテゴリ分） -->
+  <div class="ai-diagnosis-question-container" id="step2-text">
+    <div class="ai-diagnosis-question">
+      <h2>テキスト生成で特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="notion">ワークスペース管理</div>
+        <div class="ai-diagnosis-option" data-result="workspace">ドキュメント作成</div>
+        <div class="ai-diagnosis-option" data-result="communication">チームコミュニケーション</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-diagnosis-question-container" id="step2-content">
+    <div class="ai-diagnosis-question">
+      <h2>コンテンツ生成で特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="canva">デザイン作成</div>
+        <div class="ai-diagnosis-option" data-result="marketing">マーケティングコンテンツ</div>
+        <div class="ai-diagnosis-option" data-result="presentation">プレゼンテーション</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-diagnosis-question-container" id="step2-analysis">
+    <div class="ai-diagnosis-question">
+      <h2>データ分析で特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="powerbi">データ可視化</div>
+        <div class="ai-diagnosis-option" data-result="reporting">レポート作成</div>
+        <div class="ai-diagnosis-option" data-result="prediction">予測分析</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-diagnosis-question-container" id="step2-workflow">
+    <div class="ai-diagnosis-question">
+      <h2>ワークフローで特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="miro">プロセス可視化</div>
+        <div class="ai-diagnosis-option" data-result="mapping">プロセスマッピング</div>
+        <div class="ai-diagnosis-option" data-result="collab">チームコラボレーション</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-diagnosis-question-container" id="step2-automation">
+    <div class="ai-diagnosis-question">
+      <h2>業務自動化で特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="zapier">アプリケーション連携</div>
+        <div class="ai-diagnosis-option" data-result="workflow">ワークフロー自動化</div>
+        <div class="ai-diagnosis-option" data-result="automation">タスク自動化</div>
+      </div>
+    </div>
+  </div>
+  <div class="ai-diagnosis-question-container" id="step2-collaboration">
+    <div class="ai-diagnosis-question">
+      <h2>コラボレーションで特に重視する機能は何ですか？</h2>
+      <div class="ai-diagnosis-options">
+        <div class="ai-diagnosis-option" data-result="microsoft365">統合型ツール</div>
+        <div class="ai-diagnosis-option" data-result="team">チーム管理</div>
+        <div class="ai-diagnosis-option" data-result="communication">コミュニケーション</div>
+      </div>
+    </div>
+  </div>
+
+  <!-- 診断結果 -->
+  <div class="ai-diagnosis-result-container" id="result">
+    <div class="ai-diagnosis-result-title-row">
+      <h2 class="ai-diagnosis-result-title">おすすめのツール</h2>
+      <img id="main-tool-logo-title" src="" alt="" class="ai-diagnosis-tool-logo-title" style="display:none;">
+    </div>
+    <div class="ai-diagnosis-recommended-tool">
+      <h3 class="main-tool-name"></h3>
+      <p class="main-tool-description"></p>
+    </div>
+    <div class="ai-diagnosis-other-tools">
+      <h4>関連ツール</h4>
+      <ul class="other-tools-list"></ul>
+    </div>
+    <a href="https://tradivance.co.jp/training/" class="ai-diagnosis-cta-button">詳しくはコチラ &gt;&gt;</a>
+  </div>
+</div>
+
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+  console.log('DOM loaded, initializing AI diagnosis tool...');
+  
   const diagnosisData = {
-    notion: { mainTool: "Notion", logo: "https://tradivance.co.
-  jp/wp-content/uploads/2025/06/名称未設定のデザイン-2.png",
-  description: "AI機能を活用したワークスペース。文章作成とプロ
-  ジェクト管理を統合できます。", otherTools: ["Google 
-  Workspace", "Microsoft 365", "Slack", "Asana"] },
-    workspace: { mainTool: "ChatGPT", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/chatgpt_
-  logo_official_2048px.png", description: "AIによるドキュメント
-  作成・要約・翻訳など幅広い文章業務を効率化します。",
-  otherTools: ["Claude", "Gemini", "Copilot", "Jasper"] },
-    communication: { mainTool: "Slack", logo: "https://tradivan
-  ce.co.jp/wp-content/uploads/2025/06/slack_logo_official.png",
-   logoHeight: 36, description: "チームコミュニケーションツール
-  。文書共有と編集を効率化します。", otherTools: ["Microsoft 
-  Teams", "Discord", "Google Chat", "Zoom"] },
-    canva: { mainTool: "Canva", logo: "https://tradivance.co.jp
-  /wp-content/uploads/2025/06/canva_logo_official_2560px.png",
-  description: "AI機能を活用したデザインツール。ビジュアルコン
-  テンツを作成できます。", otherTools: ["Adobe Express",
-  "Figma", "Midjourney", "DALL-E"] },
-    marketing: { mainTool: "HubSpot", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/hubspot_
-  logo_official_2560px.png", logoHeight: 36, description:
-  "マーケティング自動化とコンテンツ作成を効率化します。",
-  otherTools: ["Marketo", "Mailchimp", "Buffer", "Hootsuite"]
-  },
-    presentation: { mainTool: "Skywork", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/skywork_
-  ai_logo_official_5146px-scaled.png", logoHeight: 36,
-  description:
-  "AI搭載のプレゼン資料作成を効率化。共同編集も簡単です。",
-  otherTools: ["Gamma", "Manus", "Canva", "Genspark"] },
-    powerbi: { mainTool: "Genspark AI Sheet", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/genspark
-  _logo_official_400px.jpg", description:
-  "データの可視化と分析を自動化します。", otherTools: ["Power 
-  BI", "Tableau", "Excel", "Google Sheets"] },
-    reporting: { mainTool: "Tableau", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/tableau_
-  logo_official_2400px.png", logoHeight: 36, description:
-  "レポート作成とデータ可視化を効率化します。", otherTools:
-  ["Power BI", "Looker", "Google Data Studio", "Qlik Sense"] },
-    prediction: { mainTool: "Amazon Forecast", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/aws_logo
-  _official.png", logoHeight: 36, description:
-  "AIによる予測分析を自動化します。", otherTools: ["Azure ML",
-  "Google AutoML", "DataRobot", "H2O.ai"] },
-    miro: { mainTool: "Miro", logo: "https://tradivance.co.jp/w
-  p-content/uploads/2025/06/miro_logo_official.png",
-  description: "業務フローの可視化と改善を効率化します。",
-  otherTools: ["Mural", "FigJam", "Conceptboard", "Whimsical"]
-  },
-    mapping: { mainTool: "Lucidchart", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/lucidcha
-  rt_logo_official_2560px.png", logoHeight: 36, description:
-  "プロセスマッピングと図解を効率化します。", otherTools:
-  ["Draw.io", "Visio", "Creately", "SmartDraw"] },
-    collab: { mainTool: "Slack", logo: "https://tradivance.co.j
-  p/wp-content/uploads/2025/06/slack_logo_official.png",
-  logoHeight: 36, description:
-  "チームコラボレーションを効率化します。", otherTools:
-  ["Microsoft Teams", "Discord", "Notion", "Zoom"] },
-    zapier: { mainTool: "Zapier", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/zapier_l
-  ogo_official_2560px.png", description:
-  "アプリケーション間の自動化フローを作成できます。",
-  otherTools: ["Make", "Power Automate", "n8n", "UiPath"] },
-    workflow: { mainTool: "Power Automate", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/power_au
-  tomate_logo_official_2048px.png", description:
-  "業務フローの自動化を効率化します。", otherTools: ["Zapier",
-  "Make", "monday.com", "Nintex"] },
-    automation: { mainTool: "UiPath", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/uipath_l
-  ogo_official_530px.png", description:
-  "繰り返し作業の自動化を効率化します。", otherTools:
-  ["Automation Anywhere", "Blue Prism", "WinActor", "Power 
-  Automate"] },
-    microsoft365: { mainTool: "Microsoft 365", logo:
-  "https://tradivance.co.jp/wp-content/uploads/2025/06/microsof
-  t_365_logo_official.png", description: "統合型ワークグループ
-  ツール。文書作成からコミュニケーションまでをサポートします。"
-  , otherTools: ["Google Workspace", "Slack", "Zoom", "Notion"]
-   },
-    team: { mainTool: "Asana", logo: "https://tradivance.co.jp/
-  wp-content/uploads/2025/06/asana_logo_official_800px.png",
-  logoHeight: 36, description:
-  "チーム管理とタスク割り当てを効率化します。", otherTools:
-  ["Trello", "Monday.com", "ClickUp", "Linear"] }
+    notion: { mainTool: "Notion", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/名称未設定のデザイン-2.png", description: "AI機能を活用したワークスペース。文章作成とプロジェクト管理を統合できます。", otherTools: ["Google Workspace", "Microsoft 365", "Slack", "Asana"] },
+    workspace: { mainTool: "ChatGPT", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/chatgpt_logo_official_2048px.png", description: "AIによるドキュメント作成・要約・翻訳など幅広い文章業務を効率化します。", otherTools: ["Claude", "Gemini", "Copilot", "Jasper"] },
+    communication: { mainTool: "Slack", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/slack_logo_official.png", logoHeight: 36, description: "チームコミュニケーションツール。文書共有と編集を効率化します。", otherTools: ["Microsoft Teams", "Discord", "Google Chat", "Zoom"] },
+    canva: { mainTool: "Canva", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/canva_logo_official_2560px.png", description: "AI機能を活用したデザインツール。ビジュアルコンテンツを作成できます。", otherTools: ["Adobe Express", "Figma", "Midjourney", "DALL-E"] },
+    marketing: { mainTool: "HubSpot", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/hubspot_logo_official_2560px.png", logoHeight: 36, description: "マーケティング自動化とコンテンツ作成を効率化します。", otherTools: ["Marketo", "Mailchimp", "Buffer", "Hootsuite"] },
+    presentation: { mainTool: "Skywork", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/skywork_ai_logo_official_5146px-scaled.png", logoHeight: 36, description: "AI搭載のプレゼン資料作成を効率化。共同編集も簡単です。", otherTools: ["Gamma", "Manus", "Canva", "Genspark"] },
+    powerbi: { mainTool: "Genspark AI Sheet", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/genspark_logo_official_400px.jpg", description: "データの可視化と分析を自動化します。", otherTools: ["Power BI", "Tableau", "Excel", "Google Sheets"] },
+    reporting: { mainTool: "Tableau", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/tableau_logo_official_2400px.png", logoHeight: 36, description: "レポート作成とデータ可視化を効率化します。", otherTools: ["Power BI", "Looker", "Google Data Studio", "Qlik Sense"] },
+    prediction: { mainTool: "Amazon Forecast", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/aws_logo_official.png", logoHeight: 36, description: "AIによる予測分析を自動化します。", otherTools: ["Azure ML", "Google AutoML", "DataRobot", "H2O.ai"] },
+    miro: { mainTool: "Miro", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/miro_logo_official.png", description: "業務フローの可視化と改善を効率化します。", otherTools: ["Mural", "FigJam", "Conceptboard", "Whimsical"] },
+    mapping: { mainTool: "Lucidchart", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/lucidchart_logo_official_2560px.png", logoHeight: 36, description: "プロセスマッピングと図解を効率化します。", otherTools: ["Draw.io", "Visio", "Creately", "SmartDraw"] },
+    collab: { mainTool: "Slack", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/slack_logo_official.png", logoHeight: 36, description: "チームコラボレーションを効率化します。", otherTools: ["Microsoft Teams", "Discord", "Notion", "Zoom"] },
+    zapier: { mainTool: "Zapier", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/zapier_logo_official_2560px.png", description: "アプリケーション間の自動化フローを作成できます。", otherTools: ["Make", "Power Automate", "n8n", "UiPath"] },
+    workflow: { mainTool: "Power Automate", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/power_automate_logo_official_2048px.png", description: "業務フローの自動化を効率化します。", otherTools: ["Zapier", "Make", "monday.com", "Nintex"] },
+    automation: { mainTool: "UiPath", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/uipath_logo_official_530px.png", description: "繰り返し作業の自動化を効率化します。", otherTools: ["Automation Anywhere", "Blue Prism", "WinActor", "Power Automate"] },
+    microsoft365: { mainTool: "Microsoft 365", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/microsoft_365_logo_official.png", description: "統合型ワークグループツール。文書作成からコミュニケーションまでをサポートします。", otherTools: ["Google Workspace", "Slack", "Zoom", "Notion"] },
+    team: { mainTool: "Asana", logo: "https://tradivance.co.jp/wp-content/uploads/2025/06/asana_logo_official_800px.png", logoHeight: 36, description: "チーム管理とタスク割り当てを効率化します。", otherTools: ["Trello", "Monday.com", "ClickUp", "Linear"] }
   };
 
   // ステップ制御
@@ -494,55 +354,68 @@
   ];
   const resultContainer = document.getElementById('result');
 
+  // エラーハンドリング
+  if (!step1 || !resultContainer) {
+    console.error('Required elements not found');
+    return;
+  }
+
+  console.log('Elements found, setting up event listeners...');
+
   // 1階層目クリックで2階層目へ
-  step1.querySelectorAll('.ai-diagnosis-option').forEach(option
-   => {
-    option.addEventListener('click', () => {
+  step1.querySelectorAll('.ai-diagnosis-option').forEach(option => {
+    option.addEventListener('click', function() {
+      console.log('Step 1 option clicked:', this.getAttribute('data-next'));
       step1.classList.remove('active');
-      step2s.forEach(s => s.style.display = 'none');
-      const next = option.getAttribute('data-next');
+      step2s.forEach(s => { if (s) s.style.display = 'none'; });
+      const next = this.getAttribute('data-next');
       const step2 = document.getElementById(next);
-      if (step2) step2.style.display = 'block';
+      if (step2) {
+        step2.style.display = 'block';
+        console.log('Showing step 2:', next);
+      } else {
+        console.error('Step 2 element not found:', next);
+      }
     });
   });
 
   // 2階層目クリックで結果へ
   step2s.forEach(step2 => {
-
-  step2.querySelectorAll('.ai-diagnosis-option').forEach(option
-   => {
-      option.addEventListener('click', () => {
+    if (!step2) return;
+    step2.querySelectorAll('.ai-diagnosis-option').forEach(option => {
+      option.addEventListener('click', function() {
+        console.log('Step 2 option clicked:', this.getAttribute('data-result'));
         step2.style.display = 'none';
-        showResult(option.getAttribute('data-result'));
+        showResult(this.getAttribute('data-result'));
       });
     });
   });
 
   function showResult(resultKey) {
+    console.log('showResult called with:', resultKey);
     const data = diagnosisData[resultKey];
     // すべてのstep2を非表示に
-    document.querySelectorAll('.ai-diagnosis-question-container
-  ').forEach(el => el.style.display = 'none');
+    document.querySelectorAll('.ai-diagnosis-question-container').forEach(el => el.style.display = 'none');
     // 診断結果を表示
     resultContainer.style.display = 'block';
     if (!data) {
+      console.error('No data found for key:', resultKey);
       return;
     }
-    const mainToolName =
-  resultContainer.querySelector('.main-tool-name');
-    const mainToolDesc =
-  resultContainer.querySelector('.main-tool-description');
-    const mainToolLogoTitle =
-  document.getElementById('main-tool-logo-title');
 
-    mainToolName.textContent = data.mainTool;
-    mainToolDesc.textContent = data.description || "";
-    if (data.logo) {
+    const mainToolName = resultContainer.querySelector('.main-tool-name');
+    const mainToolDesc = resultContainer.querySelector('.main-tool-description');
+    const mainToolLogoTitle = document.getElementById('main-tool-logo-title');
+
+    if (mainToolName) mainToolName.textContent = data.mainTool;
+    if (mainToolDesc) mainToolDesc.textContent = data.description || "";
+    
+    if (data.logo && mainToolLogoTitle) {
       mainToolLogoTitle.src = data.logo;
       mainToolLogoTitle.alt = data.mainTool + " ロゴ";
       mainToolLogoTitle.style.display = "inline-block";
-      mainToolLogoTitle.style.height = (data.logoHeight || 36)
-  + "px";
+      mainToolLogoTitle.style.height = (data.logoHeight || 36) + "px";
+      
       // 個別ロゴ調整クラスの付与
       const logoClassMap = {
         "Slack": "ai-logo-adjust-slack",
@@ -553,6 +426,7 @@
         "Asana": "ai-logo-adjust-asana",
         "HubSpot": "ai-logo-adjust-hubspot"
       };
+      
       // 一度すべての調整クラスを外す
       mainToolLogoTitle.classList.remove(
         "ai-logo-adjust-slack",
@@ -563,45 +437,38 @@
         "ai-logo-adjust-asana",
         "ai-logo-adjust-hubspot"
       );
+      
       // 必要ならクラスを付与
       if (logoClassMap[data.mainTool]) {
-
-  mainToolLogoTitle.classList.add(logoClassMap[data.mainTool]);
+        mainToolLogoTitle.classList.add(logoClassMap[data.mainTool]);
       }
-    } else {
+    } else if (mainToolLogoTitle) {
       mainToolLogoTitle.style.display = "none";
-      mainToolLogoTitle.classList.remove(
-        "ai-logo-adjust-slack",
-        "ai-logo-adjust-lucidchart",
-        "ai-logo-adjust-tableau",
-        "ai-logo-adjust-amazon",
-        "ai-logo-adjust-skywork",
-        "ai-logo-adjust-asana",
-        "ai-logo-adjust-hubspot"
-      );
     }
 
-    const otherToolsContainer =
-  resultContainer.querySelector('.ai-diagnosis-other-tools');
-    const otherToolsList =
-  otherToolsContainer.querySelector('.other-tools-list');
-
-    // リストをクリア
-    otherToolsList.innerHTML = '';
-
-    if (data.otherTools && data.otherTools.length) {
-      data.otherTools.forEach(tool => {
+    const otherToolsList = resultContainer.querySelector('.other-tools-list');
+    if (otherToolsList) {
+      // リストをクリア
+      otherToolsList.innerHTML = '';
+      
+      if (data.otherTools && data.otherTools.length) {
+        data.otherTools.forEach(tool => {
+          const li = document.createElement('li');
+          li.textContent = tool;
+          otherToolsList.appendChild(li);
+        });
+        console.log('Added', data.otherTools.length, 'related tools');
+      } else {
         const li = document.createElement('li');
-        li.textContent = tool;
+        li.textContent = '関連ツールはありません';
+        li.style.gridColumn = '1 / -1';
         otherToolsList.appendChild(li);
-      });
-    } else {
-      const li = document.createElement('li');
-      li.textContent = '関連ツールはありません';
-      li.style.gridColumn = '1 / -1'; // 全幅に表示
-      otherToolsList.appendChild(li);
+      }
     }
   }
-  </script>
-  </body>
-  </html>
+
+  console.log('AI diagnosis tool initialized successfully');
+});
+</script>
+</body>
+</html>
